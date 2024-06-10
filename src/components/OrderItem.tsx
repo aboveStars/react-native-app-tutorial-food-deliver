@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import React from "react";
 import { Order } from "../types";
 import { formatDistanceToNow } from "date-fns";
-import { router } from "expo-router";
+import { router, useSegments } from "expo-router";
 
 const OrderItem = ({
   created_at,
@@ -12,10 +12,12 @@ const OrderItem = ({
   user_id,
   order_items,
 }: Order) => {
+  const segments = useSegments();
+
   return (
     <Pressable
       onPress={() => {
-        router.push(`/(user)/orders/${id}`);
+        router.push(`/${segments[0]}/orders/${id}`);
       }}
       style={{
         height: 80,

@@ -1,10 +1,9 @@
 import OrderItem from "@/src/components/OrderItem";
 import OrderListItem from "@/src/components/OrderListItem";
 import orders from "@/src/data/orders";
-import { formatDistanceToNow } from "date-fns";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React from "react";
-import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { FlatList, SafeAreaView, View } from "react-native";
 
 const OrderDetail = () => {
   const { id } = useLocalSearchParams();
