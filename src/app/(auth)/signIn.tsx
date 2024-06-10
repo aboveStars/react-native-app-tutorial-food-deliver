@@ -1,13 +1,34 @@
-import { View, Text, SafeAreaView, TextInput, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  TextInput,
+  StyleSheet,
+  Alert,
+} from "react-native";
 import React, { useState } from "react";
 import Button from "@/src/components/Button";
 import { router } from "expo-router";
+import { supabase } from "@/src/lib/supabase";
 
 const signIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSignInButton = () => {};
+  const handleSignInButton = async () => {
+    setLoading(true);
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+
+    if (error) {
+      Alert.alert(error.message);
+      return setLoading(false);
+    }
+  };
 
   const handleSignUpButton = () => {
     router.replace("/(auth)/signUp");
@@ -41,7 +62,11 @@ const signIn = () => {
           />
         </View>
 
-        <Button text="Sign In" onPress={handleSignInButton} />
+        <Button
+          text="Sign In"
+          onPress={handleSignInButton}
+          disabled={loading}
+        />
 
         <Text
           style={{

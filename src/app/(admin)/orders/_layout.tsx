@@ -5,9 +5,9 @@ const _layout = () => {
   return (
     <Stack>
       <Stack.Screen
-        name="index"
+        name="list"
         options={{
-          headerTitle: "Orders",
+          headerShown: false,
         }}
       />
       <Stack.Screen
