@@ -1,9 +1,11 @@
-import { Link } from "expo-router";
+import { Link, Redirect } from "expo-router";
 import React from "react";
 import { View } from "react-native";
 import Button from "../components/Button";
 
 const index = () => {
+  return <Redirect href="/(admin)" />;
+
   return (
     <View style={{ flex: 1, justifyContent: "center", padding: 10 }}>
       <Link href={"/(user)"} asChild>
