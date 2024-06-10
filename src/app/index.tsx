@@ -4,7 +4,7 @@ import { View } from "react-native";
 import Button from "../components/Button";
 
 const index = () => {
-  return <Redirect href="/(auth)/signUp" />;
+  return <Redirect href="/(user)" />;
 
   return (
     <View style={{ flex: 1, justifyContent: "center", padding: 10 }}>

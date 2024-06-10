@@ -27,8 +27,6 @@ export default function TabLayout() {
         headerShown: useClientOnlyValue(false, true),
       }}
     >
-      <Tabs.Screen name="index" options={{ href: null }} />
-
       <Tabs.Screen
         name="menu"
         options={{
@@ -40,10 +38,11 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="orders"
         options={{
-          title: "two",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          headerShown: false,
+          title: "Orders",
+          tabBarIcon: ({ color }) => <TabBarIcon name="bed" color={color} />,
         }}
       />
     </Tabs>
