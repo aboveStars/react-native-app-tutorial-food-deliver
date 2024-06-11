@@ -48,6 +48,7 @@ const signIn = () => {
             onChangeText={setEmail}
             style={styles.email}
             placeholder="yunuskorkmaz@apidon.com"
+            autoCapitalize="none"
           />
         </View>
 
@@ -59,6 +60,7 @@ const signIn = () => {
             secureTextEntry={true}
             style={styles.password}
             placeholder="****"
+            autoCapitalize="none"
           />
         </View>
 

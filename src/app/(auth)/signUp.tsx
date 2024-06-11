@@ -24,7 +24,10 @@ const signUp = () => {
       password: password,
     });
 
-    if (error) Alert.alert(error.message);
+    if (error) {
+      Alert.alert(error.message);
+      console.log(error);
+    }
 
     setLoading(false);
   };
@@ -47,6 +50,7 @@ const signUp = () => {
             onChangeText={setEmail}
             style={styles.email}
             placeholder="yunuskorkmaz@apidon.com"
+            autoCapitalize="none"
           />
         </View>
 
@@ -58,6 +62,7 @@ const signUp = () => {
             secureTextEntry={true}
             style={styles.password}
             placeholder="****"
+            autoCapitalize="none"
           />
         </View>
 
