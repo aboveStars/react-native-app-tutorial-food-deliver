@@ -7,6 +7,8 @@ import Button from "../components/Button";
 const CartScreen = () => {
   const { items, total } = useCart();
 
+  const { checkout } = useCart();
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <FlatList
@@ -31,7 +33,7 @@ const CartScreen = () => {
         ${total}
       </Text>
 
-      <Button text="Checkout" />
+      <Button text="Checkout" onPress={checkout} />
     </SafeAreaView>
   );
 };

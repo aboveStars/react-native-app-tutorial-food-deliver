@@ -1,20 +1,41 @@
+import { useOrderDetails, useUpdateOrder } from "@/src/api/orders";
 import OrderItem from "@/src/components/OrderItem";
 import OrderListItem from "@/src/components/OrderListItem";
-import orders from "@/src/data/orders";
 import { OrderStatusList } from "@/src/types";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React from "react";
-import { FlatList, Pressable, SafeAreaView, View, Text } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  SafeAreaView,
+  View,
+  Text,
+} from "react-native";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
 const OrderDetail = () => {
-  const { id } = useLocalSearchParams();
+  const { id: idString } = useLocalSearchParams();
 
-  const orderData = orders.find((order) => order.id.toString() === id);
+  const id = parseFloat(
+    idString === undefined
+      ? ""
+      : typeof idString === "string"
+      ? idString
+      : idString[0]
+  );
 
-  if (!orderData) {
-    return <View>Not Found</View>;
-  }
+  const { data: orderData, isLoading, error } = useOrderDetails(id);
+
+  const { mutate: updateOrder } = useUpdateOrder();
+
+  if (isLoading) return <ActivityIndicator />;
+
+  if (error || !orderData) return <Text>Failed to get order detail.</Text>;
+
+  const updateStatus = (status: string) => {
+    updateOrder({ id: id, status: status });
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -77,7 +98,7 @@ const OrderDetail = () => {
                 {OrderStatusList.map((status) => (
                   <Pressable
                     key={status}
-                    // onPress={() => updateStatus(status)}
+                    onPress={() => updateStatus(status)}
                     style={{
                       borderColor: Colors.light.tint,
                       borderWidth: 1,
@@ -85,9 +106,7 @@ const OrderDetail = () => {
                       borderRadius: 5,
                       marginVertical: 10,
                       backgroundColor:
-                        orderData.status === status
-                          ? "black"
-                          : "transparent",
+                        orderData.status === status ? "black" : "transparent",
                     }}
                   >
                     <Text

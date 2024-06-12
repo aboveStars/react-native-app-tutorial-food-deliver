@@ -15,7 +15,7 @@ export default function OrderListNavigator() {
       <TopTabs.Screen
         name="archive"
         options={{
-          title: "Done",
+          title: "Delivered",
         }}
       />
     </TopTabs>

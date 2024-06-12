@@ -1,11 +1,15 @@
 import { PropsWithChildren, createContext, useContext, useState } from "react";
 import { CartItem, Product } from "../types";
+import { useInsertOrder } from "../api/orders";
+import { router } from "expo-router";
+import { useInsertOrderItem } from "../api/orderItems";
 
 type CartType = {
   items: CartItem[];
   addItem: (product: Product, size: CartItem["size"]) => void;
   updateQuantity: (itemId: string, amount: -1 | 1) => void;
   total: number;
+  checkout: () => void;
 };
 
 export const CartContext = createContext<CartType>({
@@ -13,10 +17,15 @@ export const CartContext = createContext<CartType>({
   addItem: () => {},
   updateQuantity: () => {},
   total: 0,
+  checkout: () => {},
 });
 
 const CartProvider = ({ children }: PropsWithChildren) => {
   const [items, setItems] = useState<CartItem[]>([]);
+
+  const { mutate: insertOrder } = useInsertOrder();
+
+  const { mutate: insertOrderItems } = useInsertOrderItem();
 
   const addItem = (product: Product, size: CartItem["size"]) => {
     const alreadyHasObject = items.find(
@@ -49,6 +58,45 @@ const CartProvider = ({ children }: PropsWithChildren) => {
     return setItems(newItems);
   };
 
+  const checkOut = () => {
+    insertOrder(
+      {
+        status: "New",
+        total: items.reduce((sum, current) => {
+          return current.quantity * current.product.price + sum;
+        }, 0),
+      },
+      {
+        onSuccess: (data: any) => {
+          saveOrderItems(data);
+        },
+      }
+    );
+  };
+
+  const saveOrderItems = (data: any) => {
+    console.log("Save order initiated.");
+
+    const orderItems = items.map((a) => ({
+      order_id: data.id,
+      product_id: a.product_id,
+      quantity: a.quantity,
+      size: a.size,
+    }));
+
+    insertOrderItems(orderItems, {
+      onSuccess() {
+        console.log("We are in on success of insertOrderItems");
+        clearItems();
+        router.replace(`/(user)/orders/${data.id}`);
+      },
+    });
+  };
+
+  const clearItems = () => {
+    setItems([]);
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -59,6 +107,7 @@ const CartProvider = ({ children }: PropsWithChildren) => {
           total += current.quantity * current.product.price;
           return total;
         }, 0),
+        checkout: checkOut,
       }}
     >
       {children}

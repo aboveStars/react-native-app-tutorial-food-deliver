@@ -1,14 +1,14 @@
-import { View, Text, FlatList } from "react-native";
-import React from "react";
-import orders from "@/src/data/orders";
+import { useMyOrderList } from "@/src/api/orders";
 import OrderItem from "@/src/components/OrderItem";
+import React from "react";
+import { FlatList } from "react-native";
 
 const OrderScreen = () => {
-  const orderData = orders;
+  const { data: orders, isLoading, error } = useMyOrderList();
 
   return (
     <FlatList
-      data={orderData}
+      data={orders}
       contentContainerStyle={{
         padding: 10,
         gap: 10,

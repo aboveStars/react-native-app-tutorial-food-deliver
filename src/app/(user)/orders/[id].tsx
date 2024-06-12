@@ -1,18 +1,32 @@
+import { useOrderDetails } from "@/src/api/orders";
 import OrderItem from "@/src/components/OrderItem";
 import OrderListItem from "@/src/components/OrderListItem";
-import orders from "@/src/data/orders";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React from "react";
-import { FlatList, SafeAreaView, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  SafeAreaView,
+  Text,
+  View,
+} from "react-native";
 
 const OrderDetail = () => {
-  const { id } = useLocalSearchParams();
+  const { id: idString } = useLocalSearchParams();
 
-  const orderData = orders.find((order) => order.id.toString() === id);
+  const id = parseFloat(
+    idString === undefined
+      ? ""
+      : typeof idString === "string"
+      ? idString
+      : idString[0]
+  );
 
-  if (!orderData) {
-    return <View>Not Found</View>;
-  }
+  const { data: orderData, isLoading, error } = useOrderDetails(id);
+
+  if (isLoading) return <ActivityIndicator />;
+
+  if (error) return <Text>Failed to get order detail.</Text>;
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
