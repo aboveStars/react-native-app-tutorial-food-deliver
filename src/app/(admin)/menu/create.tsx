@@ -86,13 +86,16 @@ const create = (props: Props) => {
     );
   };
 
-  const onUpdate = () => {
+  const onUpdate = async () => {
     if (!validateInput()) return;
 
     console.warn("Updating item...");
 
+    const imagePath = await uploadImage();
+    if (!imagePath) return;
+
     updateProduct(
-      { id, name, price: parseFloat(price), image },
+      { id, name, price: parseFloat(price), image: imagePath },
       {
         onSuccess: () => {
           resetFields();

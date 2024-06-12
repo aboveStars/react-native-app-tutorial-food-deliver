@@ -52,6 +52,15 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <TabBarIcon name="bed" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profile",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="headphones" color={color} />
+          ),
+        }}
+      />
       <Tabs.Screen name="index" options={{ href: null }} />
     </Tabs>
   );
