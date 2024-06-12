@@ -13,6 +13,11 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { Stack, router, useLocalSearchParams } from "expo-router";
 
+import * as FileSystem from "expo-file-system";
+import { supabase } from "@/src/lib/supabase";
+
+import { decode } from "base64-arraybuffer";
+
 type Props = {};
 
 const create = (props: Props) => {
@@ -58,19 +63,20 @@ const create = (props: Props) => {
       quality: 1,
     });
 
-    console.log(result);
-
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
   };
 
-  const onCreate = () => {
+  const onCreate = async () => {
     if (!validateInput()) return;
+
+    const imagePath = await uploadImage();
+    if (!imagePath) return;
 
     console.warn("Adding item to database...");
     insertProduct(
-      { name, price: parseFloat(price), image },
+      { name, price: parseFloat(price), image: imagePath },
       {
         onSuccess: () => {
           resetFields();
@@ -153,6 +159,39 @@ const create = (props: Props) => {
         router.replace("/(admin)");
       },
     });
+  };
+
+  const uploadImage = async () => {
+    if (!image) {
+      return console.error("No image in state.");
+    }
+
+    if (!image.startsWith("file://")) {
+      console.error("Image is already with a link.");
+      return image;
+    }
+
+    const base64 = await FileSystem.readAsStringAsync(image, {
+      encoding: "base64",
+    });
+
+    const filePath = Date.now().toString() + ".png";
+    const contentType = "image/png";
+
+    const { data, error } = await supabase.storage
+      .from("product-images")
+      .upload(filePath, decode(base64), { contentType: contentType });
+
+    if (error) {
+      console.error("Error on uploading image...: ", error.message);
+      return;
+    }
+
+    if (data) {
+      console.log(data);
+      return supabase.storage.from("product-images").getPublicUrl(data.path)
+        .data.publicUrl;
+    }
   };
 
   return (

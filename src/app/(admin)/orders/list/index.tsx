@@ -1,6 +1,9 @@
 import { useAdminOrderList } from "@/src/api/orders";
+import { useInsertOrderSubscription } from "@/src/api/orders/subscriptions";
 import OrderItem from "@/src/components/OrderItem";
-import React from "react";
+import { supabase } from "@/src/lib/supabase";
+import { useQueryClient } from "@tanstack/react-query";
+import React, { useEffect } from "react";
 import { ActivityIndicator, FlatList, Text } from "react-native";
 
 const OrderScreen = () => {
@@ -13,6 +16,8 @@ const OrderScreen = () => {
   if (isLoading) return <ActivityIndicator />;
 
   if (error) return <Text>Failed to fetch orders.</Text>;
+
+  useInsertOrderSubscription();
 
   return (
     <FlatList
