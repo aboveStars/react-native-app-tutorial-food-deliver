@@ -16,6 +16,7 @@ import AuthProvider from "../lib/AuthProvider";
 import QueryProvider from "../providers/QueryProvider";
 
 import { StripeProvider } from "@stripe/stripe-react-native";
+import { NotificationProvider } from "../providers/NotificationProvider";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -64,14 +65,28 @@ function RootLayoutNav() {
       <StripeProvider publishableKey={publishableKey}>
         <AuthProvider>
           <QueryProvider>
-            <CartProvider>
-              <Stack>
-                <Stack.Screen name="(user)" options={{ headerShown: false }} />
-                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                <Stack.Screen name="(admin)" options={{ headerShown: false }} />
-                <Stack.Screen name="cart" options={{ presentation: "modal" }} />
-              </Stack>
-            </CartProvider>
+            <NotificationProvider>
+              <CartProvider>
+                <Stack>
+                  <Stack.Screen
+                    name="(user)"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="(auth)"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="(admin)"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="cart"
+                    options={{ presentation: "modal" }}
+                  />
+                </Stack>
+              </CartProvider>
+            </NotificationProvider>
           </QueryProvider>
         </AuthProvider>
       </StripeProvider>
