@@ -1,6 +1,7 @@
 import { useOrderDetails, useUpdateOrder } from "@/src/api/orders";
 import OrderItem from "@/src/components/OrderItem";
 import OrderListItem from "@/src/components/OrderListItem";
+import { notifyUserAboutOrderUpdate } from "@/src/lib/notifications";
 import { OrderStatusList } from "@/src/types";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React from "react";
@@ -29,13 +30,15 @@ const OrderDetail = () => {
 
   const { mutate: updateOrder } = useUpdateOrder();
 
+  const updateStatus = (status: string) => {
+    updateOrder({ id: id, status: status });
+
+    notifyUserAboutOrderUpdate({ ...orderData, status: status });
+  };
+
   if (isLoading) return <ActivityIndicator />;
 
   if (error || !orderData) return <Text>Failed to get order detail.</Text>;
-
-  const updateStatus = (status: string) => {
-    updateOrder({ id: id, status: status });
-  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

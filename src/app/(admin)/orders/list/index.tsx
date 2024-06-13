@@ -13,11 +13,11 @@ const OrderScreen = () => {
     error,
   } = useAdminOrderList({ archived: false });
 
+  useInsertOrderSubscription();
+
   if (isLoading) return <ActivityIndicator />;
 
   if (error) return <Text>Failed to fetch orders.</Text>;
-
-  useInsertOrderSubscription();
 
   return (
     <FlatList

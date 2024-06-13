@@ -5,6 +5,7 @@ import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 
 import Constants from "expo-constants";
+import { supabase } from "./supabase";
 
 export async function registerForPushNotificationsAsync() {
   let token;
@@ -56,22 +57,49 @@ export async function registerForPushNotificationsAsync() {
   return token;
 }
 
-export async function sendPushNotification(expoPushToken: string) {
+async function sendPushNotification(
+  expoPushToken: string,
+  title: string,
+  body: string
+) {
   const message = {
     to: expoPushToken,
     sound: "default",
-    title: "New Like to Your Post!",
-    body: "Elon liked your post.",
-    data: { someData: "somedata" },
+    title: title,
+    body: body,
+    data: { someData: "goes here" },
   };
 
   await fetch("https://exp.host/--/api/v2/push/send", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
-      "Accept-encoding": "gzip, deflate",
       Accept: "application/json",
+      "Accept-encoding": "gzip, deflate",
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(message),
   });
 }
+
+const getUserToken = async (userId: string) => {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", userId)
+    .single();
+
+  return data.expo_push_token;
+};
+
+export const notifyUserAboutOrderUpdate = async (orderData: any) => {
+  const token = await getUserToken(orderData.user_id);
+
+  if (!token) return;
+
+  console.log("Token: ", token);
+
+  const title = `Order #${orderData.id}`;
+  const body = orderData.status;
+
+  sendPushNotification(token, title, body);
+};
