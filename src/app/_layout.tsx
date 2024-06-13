@@ -15,6 +15,8 @@ import CartProvider from "../providers/CartProvider";
 import AuthProvider from "../lib/AuthProvider";
 import QueryProvider from "../providers/QueryProvider";
 
+import { StripeProvider } from "@stripe/stripe-react-native";
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -55,20 +57,24 @@ export default function RootLayout() {
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
+  const publishableKey = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
+
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <AuthProvider>
-        <QueryProvider>
-          <CartProvider>
-            <Stack>
-              <Stack.Screen name="(user)" options={{ headerShown: false }} />
-              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-              <Stack.Screen name="(admin)" options={{ headerShown: false }} />
-              <Stack.Screen name="cart" options={{ presentation: "modal" }} />
-            </Stack>
-          </CartProvider>
-        </QueryProvider>
-      </AuthProvider>
+      <StripeProvider publishableKey={publishableKey}>
+        <AuthProvider>
+          <QueryProvider>
+            <CartProvider>
+              <Stack>
+                <Stack.Screen name="(user)" options={{ headerShown: false }} />
+                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                <Stack.Screen name="(admin)" options={{ headerShown: false }} />
+                <Stack.Screen name="cart" options={{ presentation: "modal" }} />
+              </Stack>
+            </CartProvider>
+          </QueryProvider>
+        </AuthProvider>
+      </StripeProvider>
     </ThemeProvider>
   );
 }

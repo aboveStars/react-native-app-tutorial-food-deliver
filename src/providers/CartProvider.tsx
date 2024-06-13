@@ -3,6 +3,8 @@ import { CartItem, Product } from "../types";
 import { useInsertOrder } from "../api/orders";
 import { router } from "expo-router";
 import { useInsertOrderItem } from "../api/orderItems";
+import { initPaymentSheet } from "@stripe/stripe-react-native";
+import { initialisePaymentSheet, openPaymentSheet } from "../lib/stripe";
 
 type CartType = {
   items: CartItem[];
@@ -58,13 +60,21 @@ const CartProvider = ({ children }: PropsWithChildren) => {
     return setItems(newItems);
   };
 
-  const checkOut = () => {
+  const checkOut = async () => {
+    const inPennies = Math.floor(total() * 100);
+
+    await initialisePaymentSheet(inPennies);
+
+    const payed = await openPaymentSheet();
+
+    if (!payed) {
+      console.error("User cancelled payment!");
+    }
+
     insertOrder(
       {
         status: "New",
-        total: items.reduce((sum, current) => {
-          return current.quantity * current.product.price + sum;
-        }, 0),
+        total: inPennies,
       },
       {
         onSuccess: (data: any) => {
@@ -97,16 +107,20 @@ const CartProvider = ({ children }: PropsWithChildren) => {
     setItems([]);
   };
 
+  const total = () => {
+    return items.reduce((total, current) => {
+      total += current.quantity * current.product.price;
+      return total;
+    }, 0);
+  };
+
   return (
     <CartContext.Provider
       value={{
         items,
         addItem,
         updateQuantity,
-        total: items.reduce((total, current) => {
-          total += current.quantity * current.product.price;
-          return total;
-        }, 0),
+        total: total(),
         checkout: checkOut,
       }}
     >

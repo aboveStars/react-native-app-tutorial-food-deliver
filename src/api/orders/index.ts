@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 export const useAdminOrderList = ({ archived = false }) => {
   const statuses = archived ? ["Delivered"] : ["New", "Cooking", "Delivering"];
 
-  console.log("Stasuses: ", statuses);
+
 
   return useQuery({
     queryFn: async () => {
