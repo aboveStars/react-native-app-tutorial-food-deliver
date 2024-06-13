@@ -21,9 +21,8 @@ const fetchPaymentSheetParams = async (amount: number) => {
 };
 
 export async function initialisePaymentSheet(amount: number) {
-  const { paymentIntent, publishableKey } = await fetchPaymentSheetParams(
-    amount
-  );
+  const { paymentIntent, publishableKey, customer, ephemeralKey } =
+    await fetchPaymentSheetParams(amount);
 
   if (!paymentIntent || !publishableKey) {
     console.error("Payment Intent or publisiable key is undefined.");
@@ -33,6 +32,8 @@ export async function initialisePaymentSheet(amount: number) {
   await initPaymentSheet({
     merchantDisplayName: "aboveStars",
     paymentIntentClientSecret: paymentIntent,
+    customerId: customer,
+    customerEphemeralKeySecret: ephemeralKey,
     defaultBillingDetails: {
       name: "Elon Musk",
     },

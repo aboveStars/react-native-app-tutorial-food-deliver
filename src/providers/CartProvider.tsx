@@ -1,10 +1,9 @@
-import { PropsWithChildren, createContext, useContext, useState } from "react";
-import { CartItem, Product } from "../types";
-import { useInsertOrder } from "../api/orders";
 import { router } from "expo-router";
+import { PropsWithChildren, createContext, useContext, useState } from "react";
 import { useInsertOrderItem } from "../api/orderItems";
-import { initPaymentSheet } from "@stripe/stripe-react-native";
+import { useInsertOrder } from "../api/orders";
 import { initialisePaymentSheet, openPaymentSheet } from "../lib/stripe";
+import { CartItem, Product } from "../types";
 
 type CartType = {
   items: CartItem[];
